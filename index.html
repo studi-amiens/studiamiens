@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="StudiAmiens : le carnet partagé des étudiants d'Amiens. Manger, sortir, se cultiver et faire ses courses à petit prix, avec une bourse d'échange entre étudiants.">
+<meta name="theme-color" content="#F5F1EA">
+<meta property="og:type" content="website">
+<meta property="og:title" content="StudiAmiens — Bons plans étudiants à Amiens">
+<meta property="og:description" content="Manger, sortir, se cultiver et faire ses courses à petit prix à Amiens.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<title>StudiAmiens — Le carnet partagé des étudiants amiénois</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <div class="logo" data-go="aujourdhui" role="link" tabindex="0">
+    <div class="logo-badge">SA</div>
+    <div class="logo-word">Studi<span>Amiens</span></div>
+  </div>
+  <div class="header-actions">
+    <button class="btn-exchange btn-fav" data-go="favoris" aria-label="Mes favoris" id="btnFav"><span class="fav-star" aria-hidden="true">★</span><span class="fav-lbl">Favoris</span><span class="fav-count" id="favCount" hidden>0</span></button>
+    <button class="btn-exchange" data-action="openForm">＋ <span>Proposer un échange</span></button>
+    <button class="btn-burger" data-action="menu-open" aria-label="Menu"><span></span></button>
+  </div>
+</header>
+
+<div class="overlay" id="overlay" data-action="menu-close"></div>
+
+<aside class="drawer" id="drawer" aria-label="Menu">
+  <button class="drawer-close" data-action="menu-close" aria-label="Fermer le menu">×</button>
+  <h3>Le carnet</h3>
+  <button class="link" data-go="aujourdhui">Aujourd'hui</button>
+  <button class="link" data-go="bons-plans">Les bons plans</button>
+  <button class="link" data-go="courses">Manger</button>
+  <button class="link" data-go="copanier">Faire mes courses</button>
+  <button class="link" data-go="activites">Activités</button>
+  <button class="link" data-go="bourse">La bourse</button>
+  <h3>Mon compte</h3>
+  <button class="link" data-go="favoris">Mes favoris</button>
+  <button class="link" data-action="openForm">Déposer une annonce</button>
+  <h3>À propos</h3>
+  <button class="link" data-action="about">Le projet</button>
+</aside>
+
+<main>
+  <section class="page" id="page-aujourdhui">
+    <p class="kicker today-date" id="todayDate">Aujourd'hui à Amiens</p>
+    <h1 class="title">
+      <span class="budget-line">J'ai <span class="budget-num" id="budgetNum">10</span>&nbsp;€,</span>
+      <span class="h-sub">qu'est-ce que je fais <em>aujourd'hui&nbsp;?</em></span>
+    </h1>
+    <p class="intro">Choisis ton budget et ton moment de la journée : on te propose un petit programme à Amiens, et toutes les idées qui rentrent dans ta poche.</p>
+
+    <div class="panel budget-panel">
+      <div>
+        <p class="row-label"><label for="budgetRange">Mon budget</label></p>
+        <div class="slider-row">
+          <small>0 €</small>
+          <input type="range" class="budget" id="budgetRange" min="0" max="30" step="1" value="10" aria-label="Budget en euros">
+          <small>30 €</small>
+        </div>
+        <div class="chips" id="chipsBudget" style="margin-top:12px;"></div>
+      </div>
+      <div>
+        <p class="row-label">Quand ?</p>
+        <div class="chips" id="chipsMoment"></div>
+      </div>
+      <div>
+        <p class="row-label">Envie de…</p>
+        <div class="chips" id="chipsEnvie"></div>
+      </div>
+    </div>
+
+    <section class="g0" id="gratuit0">
+      <h2 class="g0-h">
+        <button type="button" class="g0-toggle" id="g0Toggle" data-action="g0-toggle" aria-expanded="false" aria-controls="g0Body">
+          <span class="g0-text">
+            <span class="g0-kicker">Culture gratuite</span>
+            <span class="g0-title">Se cultiver à 0&nbsp;€</span>
+            <span class="g0-sub">Touche pour découvrir ce qu'on peut faire gratuitement à Amiens.</span>
+          </span>
+          <span class="g0-right">
+            <span class="g0-count" id="g0Count"></span>
+            <span class="g0-chevron" aria-hidden="true"></span>
+          </span>
+        </button>
+      </h2>
+      <div class="g0-body" id="g0Body" hidden>
+        <div class="chips" id="chipsG0" role="group" aria-label="Type de sortie gratuite"></div>
+        <div class="cards" id="grilleG0"></div>
+      </div>
+    </section>
+
+    <div class="today-grid">
+      <div class="ticket" aria-live="polite">
+        <div class="ticket-head">
+          <p class="kicker">Ton programme</p>
+          <button class="btn-shuffle" data-action="shuffle" id="btnShuffle">
+            <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
+            Autre idée
+          </button>
+        </div>
+        <div id="programme"></div>
+      </div>
+      <div>
+        <div class="ideas-head">
+          <h3 id="ideasTitle">Dans ton budget</h3>
+          <span class="compteur" id="ideasCount"></span>
+        </div>
+        <div class="ideas" id="ideas"></div>
+        <button class="btn-ghost more-ideas" id="moreIdeas" data-action="more">Voir plus d'idées</button>
+      </div>
+    </div>
+
+    <div class="section-title">
+      <h2>Tout Amiens, <em style="font-style:normal;color:var(--bordeaux-clair);">à petit prix.</em></h2>
+      <p>Les rubriques du carnet</p>
+    </div>
+    <ul class="rubriques" id="rubriques"></ul>
+
+    <div class="bourse-teaser">
+      <div>
+        <p class="kicker" style="margin-bottom:10px;">La bourse d'échange</p>
+        <h2>Un meuble en trop,<br>un vélo à trouver&nbsp;?</h2>
+        <p>Les étudiants d'Amiens se donnent, se prêtent et s'échangent ce dont ils ont besoin. Sans argent, entre voisins de promo.</p>
+        <button class="btn-primary" data-go="bourse">Voir la bourse →</button>
+      </div>
+      <div class="mini-annonces" id="miniAnnonces"></div>
+    </div>
+
+    <p class="note">Tarifs indicatifs pour les étudiants. Pense à vérifier horaires et prix avant de te déplacer.</p>
+  </section>
+
+  <section class="page" id="page-bons-plans">
+    <p class="kicker">Le carnet partagé</p>
+    <h1 class="title">Les bons plans<br><em>qui font du bien.</em></h1>
+    <p class="intro">Des adresses testées, des tarifs étudiants et les raccourcis qu'on se refile entre deux cours.</p>
+    <div class="panel">
+      <div class="search-box">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#6B6260" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input type="search" id="recherche" placeholder="Un lieu, un quartier, une envie…" aria-label="Rechercher un bon plan">
+      </div>
+      <div class="chips" id="chips"></div>
+      <button class="favorites-btn" id="favBtn" data-action="favfilter">☆ Favoris</button>
+    </div>
+    <div class="cards" id="grilleBonsPlans"></div>
+  </section>
+
+  <section class="page" id="page-courses">
+    <p class="kicker">Manger</p>
+    <h1 class="title">Manger bien,<br><em>payer moins.</em></h1>
+    <p class="intro">Resto U à 1 €, formules étudiantes, fast-foods et petits restos du centre-ville.</p>
+    <div class="panel">
+      <div class="search-box">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#6B6260" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input type="search" id="rechercheCourses" placeholder="Un resto, une rue, un type de cuisine…" aria-label="Rechercher un restaurant">
+      </div>
+      <div class="chips" id="chipsCourses"></div>
+    </div>
+    <div class="cards" id="grilleCourses"></div>
+  </section>
+
+  <section class="page" id="page-copanier">
+    <p class="kicker">Faire mes courses</p>
+    <h1 class="title" style="font-size:clamp(30px,5.5vw,46px);">Remplis ton panier,<br><em>pas ton ticket.</em></h1>
+    <p class="intro" style="margin:16px 0 22px;">Compose tes repas de la semaine, compare les prix entre enseignes et garde ta liste de courses sous ton budget.</p>
+    <details class="g0 mk" id="marches">
+      <summary class="g0-toggle">
+        <span class="g0-text">
+          <span class="g0-kicker">Cette saison</span>
+          <span class="g0-title" style="font-size:clamp(20px,3.6vw,26px);">Marchés et bons plans courses</span>
+          <span class="g0-sub">Brocante, marché sur l'eau et ferme bio en vente directe.</span>
+        </span>
+        <span class="g0-right"><span class="g0-count" id="mkCount"></span><span class="g0-chevron" aria-hidden="true"></span></span>
+      </summary>
+      <div class="cards" id="grilleMarches"></div>
+    </details>
+    <div class="copanier-wrap">
+      <iframe id="copanierFrame" title="ÉcoPanier : organisateur de courses à petit prix"></iframe>
+    </div>
+    <p class="note" style="margin-top:14px;"><a href="copanier.html" target="_blank" rel="noopener" style="color:var(--bordeaux);font-weight:700;">Ouvrir en plein écran ↗</a></p>
+  </section>
+
+  <section class="page" id="page-activites">
+    <p class="kicker">Activités</p>
+    <h1 class="title">Sortir de la chambre,<br><em>sans se ruiner.</em></h1>
+    <p class="intro">Sport, culture, soirées et ateliers : tout ce qui se passe à Amiens quand tu as deux heures devant toi.</p>
+    <div class="panel">
+      <div class="search-box">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#6B6260" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input type="search" id="rechercheActivites" placeholder="Un théâtre, un cinéma, une sortie…" aria-label="Rechercher une activité">
+      </div>
+      <div class="chips" id="chipsActivites"></div>
+    </div>
+    <div class="cards" id="grilleActivites"></div>
+  </section>
+
+  <section class="page" id="page-bourse">
+    <p class="kicker">La bourse des étudiants</p>
+    <h1 class="title">Donner, trouver,<br>faire circuler.</h1>
+    <p class="intro">Un tableau simple pour les choses qui méritent une seconde vie : un meuble, une place, un trajet ou juste un coup de main.</p>
+    <button class="btn-primary" data-action="openForm">＋ Déposer une annonce</button>
+    <div class="panel">
+      <div class="filtres-ligne">
+        <div class="chips" id="chipsBourse"></div>
+        <span class="compteur" id="compteurBourse"></span>
+      </div>
+    </div>
+    <div class="cards" id="grilleBourse"></div>
+  </section>
+
+  <section class="page" id="page-favoris">
+    <p class="kicker">Mon carnet</p>
+    <h1 class="title">Mes <em>favoris.</em></h1>
+    <p class="intro">Les adresses et les annonces que tu as mises de côté avec l'étoile ☆. Elles restent enregistrées dans ce navigateur.</p>
+    <div class="cards" id="grilleFavoris"></div>
+  </section>
+
+  <section class="page" id="page-form">
+    <p class="kicker">Nouvelle annonce</p>
+    <h1 class="title">Déposer <em>une annonce.</em></h1>
+    <p class="intro" id="formIntro"></p>
+    <div class="panel">
+      <div class="form-grid">
+        <div class="field"><label for="fType">Type</label>
+          <select id="fType"><option>Je donne</option><option>Je cherche</option></select></div>
+        <div class="field"><label for="fTitre">Titre</label>
+          <input type="text" id="fTitre" maxlength="80" placeholder="Ex : Bureau en bois, à récupérer"></div>
+        <div class="field"><label for="fCat">Catégorie</label>
+          <select id="fCat">
+            <option>Mobilier</option><option>Électroménager</option>
+            <option>Livres &amp; cours</option><option>Vêtements</option>
+            <option>Transport</option><option>Services</option><option>Autre</option>
+          </select></div>
+        <div class="field"><label for="fQuartier">Quartier</label>
+          <input type="text" id="fQuartier" maxlength="40" placeholder="Ex : Saint-Leu"></div>
+        <div class="field"><label for="fDesc">Description</label>
+          <textarea id="fDesc" maxlength="400" placeholder="Quelques détails, l'état, les contraintes…"></textarea></div>
+        <div class="field"><label for="fContact">Contact</label>
+          <input type="text" id="fContact" maxlength="60" placeholder="Pseudo, mail ou @…"></div>
+      </div>
+      <p class="form-note">Ne publie ni ton adresse ni ton numéro de téléphone. Donne rendez-vous dans un lieu public, de préférence de jour.</p>
+      <div class="form-actions">
+        <button class="btn-primary" id="btnPublier" style="margin:0;width:auto;flex:1;min-width:200px;" data-action="publish">Publier l'annonce</button>
+        <button class="btn-ghost" data-go="bourse">Annuler</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<nav class="tabs" aria-label="Navigation principale">
+  <button class="tab" data-tab="aujourdhui" data-go="aujourdhui">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>
+    <span>Aujourd'hui</span>
+  </button>
+  <button class="tab" data-tab="bons-plans" data-go="bons-plans">
+    <svg viewBox="0 0 24 24"><path d="M20.6 13.4l-7.2 7.2a2 2 0 01-2.8 0l-7.2-7.2a2 2 0 01-.6-1.6l.4-6a2 2 0 011.9-1.9l6-.4a2 2 0 011.6.6l7.9 7.9a2 2 0 010 2.8z"/><circle cx="8.5" cy="8.5" r="1.4"/></svg>
+    <span>Bons plans</span>
+  </button>
+  <button class="tab" data-tab="courses" data-go="courses">
+    <svg viewBox="0 0 24 24"><path d="M7 3v7a2 2 0 002 2v9"/><path d="M11 3v7a2 2 0 01-2 2"/><path d="M17 3c-2 2-3 5-3 8h3v10"/></svg>
+    <span>Manger</span>
+  </button>
+  <button class="tab" data-tab="copanier" data-go="copanier">
+    <svg viewBox="0 0 24 24"><path d="M4 8h16l-1.4 10.2A2 2 0 0116.6 20H7.4a2 2 0 01-2-1.8L4 8z"/><path d="M9 8V6a3 3 0 016 0v2"/></svg>
+    <span>Courses</span>
+  </button>
+  <button class="tab" data-tab="activites" data-go="activites">
+    <svg viewBox="0 0 24 24"><path d="M5 19l1.5-6.5L15 4a2 2 0 012.8 2.8L9.5 15z"/><path d="M14 5.5l4 4"/><path d="M4 20h16"/></svg>
+    <span>Activités</span>
+  </button>
+  <button class="tab" data-tab="bourse" data-go="bourse">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-4 9 4-9 4z"/><path d="M6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"/></svg>
+    <span>Bourse</span>
+  </button>
+</nav>
+
+<dialog id="fiche" aria-labelledby="ficheTitre">
+  <div class="fiche-in">
+    <button class="fiche-close" data-action="fiche-close" aria-label="Fermer la fiche">×</button>
+    <p class="kicker" id="ficheTag"></p>
+    <h2 id="ficheTitre"></h2>
+    <div id="ficheCorps"></div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="script.js"></script>
+</body>
+</html>
