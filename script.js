@@ -1,7 +1,11 @@
 /* ============================================================
-   CONFIG — bourse partagée (optionnel)
-   Laisse vide = les annonces restent dans le navigateur de chacun.
-   Renseigne ces 2 valeurs (projet Supabase + supabase.sql) pour partager la bourse.
+   CONFIG — comptes en ligne et bourse partagée (optionnel)
+   Laisse vide = tout reste dans le navigateur de chacun (mode démo :
+   comptes locaux, panier et annonces enregistrés sur l'appareil).
+   Renseigne url + clé « anon » (jamais la clé « service_role ») d'un projet
+   Supabase et exécute optionnel/supabase.sql pour avoir de VRAIS comptes
+   (inscription, e-mail de confirmation, mot de passe oublié) et un panier
+   synchronisé sur tous les appareils.
    ============================================================ */
 const BACKEND = { url: "", key: "" };
 
@@ -11,21 +15,21 @@ const BACKEND = { url: "", key: "" };
 /* ---- MANGER : restaurants, CROUS, formules étudiantes + courses (source : RECHERCHES.pdf) ---- */
 const courses = [
   // CROUS
-  {t:"Restaurants universitaires (CROUS)", c:"CROUS", q:"Campus et centre-ville", d:"Repas complet à 1 € pour tous les étudiants avec un compte Izly actif, boursiers ou non : un plat principal et jusqu'à deux accompagnements (entrée, fromage, dessert ou fruit), le midi et le soir là où le Crous propose un dîner.", m:"1 € le repas", ok:true},
-  {t:"Cafétéria de la Veillère", c:"CROUS", q:"Petite rue de la Veillère", d:"Cafétéria CROUS à tarifs étudiants.", m:"≈ 1 – 3,30 €", ok:true},
-  {t:"Event'Café", c:"CROUS", q:"Centre-ville", d:"Cafétéria CROUS, certaines formules à environ 1 €.", m:"Dès ≈ 1 €", ok:true},
+  {t:"Restaurants universitaires (CROUS)", c:"CROUS", q:"Campus et centre-ville", d:"Repas complet à 1 € pour tous les étudiants avec un compte Izly actif, boursiers ou non : un plat principal et jusqu'à deux accompagnements (entrée, fromage, dessert ou fruit), le midi et le soir là où le Crous propose un dîner.", m:"1 € le repas", menus:[["Repas complet : plat principal + jusqu'à 2 accompagnements (entrée, fromage, dessert ou fruit)", "1 €"]], ok:true},
+  {t:"Cafétéria de la Veillère", c:"CROUS", q:"Petite rue de la Veillère", d:"Cafétéria CROUS à tarifs étudiants.", m:"≈ 1 – 3,30 €", menus:[["Formules de la cafétéria CROUS", "≈ 1 – 3,30 €"]], ok:true},
+  {t:"Event'Café", c:"CROUS", q:"Centre-ville", d:"Cafétéria CROUS, certaines formules à environ 1 €.", m:"Dès ≈ 1 €", menus:[["Certaines formules du CROUS", "≈ 1 €"]], ok:true},
   {t:"Cafétéria Saint-Leu", c:"CROUS", q:"Saint-Leu", d:"Cafétéria CROUS à tarifs étudiants.", m:"Tarifs CROUS", ok:true},
   {t:"Cafétéria Droit & Économie", c:"CROUS", q:"Faculté de droit et d'économie", d:"Cafétéria CROUS à tarifs étudiants.", m:"Tarifs CROUS", ok:true},
   {t:"Cafétéria des Arts", c:"CROUS", q:"Faculté des Arts", d:"Cafétéria CROUS à tarifs étudiants.", m:"Tarifs CROUS", ok:true},
   // Formules étudiantes
-  {t:"The 216 Food", c:"Formule étudiante", q:"Amiens centre", d:"Menu étudiant : kebab, tenders ou tacos M + frites + boisson.", m:"≈ 7,50 €", ok:true},
-  {t:"Bento", c:"Formule étudiante", q:"19 rue des Sergents", d:"Menu étudiant en cuisine asiatique. Formule poulet dynamite + boisson à 7,90 €.", m:"7,90 – 9,90 €", ok:true},
-  {t:"O'Paradise", c:"Formule étudiante", q:"Amiens centre", d:"Burger + boisson sur présentation de la carte étudiante.", m:"9,90 €", ok:true},
-  {t:"Lusitalia", c:"Formule étudiante", q:"3 rue des Sergents", d:"Formule étudiante pizzas / italien.", m:"9,90 €", ok:true},
-  {t:"Beef N'Co", c:"Formule étudiante", q:"12 rue Léon Blum", d:"Menu étudiant : plat + frites + boisson (burgers).", m:"10 €", ok:true},
-  {t:"Gaddar", c:"Formule étudiante", q:"Amiens centre", d:"Menu étudiant sur présentation de la carte étudiante.", m:"11,90 €", ok:true},
-  {t:"Allo Mario's Pizza", c:"Formule étudiante", q:"Amiens", d:"Formule étudiante : pizza solo + boisson.", m:"8,99 €", ok:true},
-  {t:"Mian Miam", c:"Formule étudiante", q:"12 place Parmentier", d:"Menu midi étudiant (cuisine asiatique) sur présentation de la carte étudiante.", m:"14,90 €", ok:true},
+  {t:"The 216 Food", c:"Formule étudiante", q:"Amiens centre", d:"Fast-food avec menu étudiant.", m:"≈ 7,50 €", menus:[["Menu étudiant : kebab, tenders ou tacos M + frites + boisson", "≈ 7,50 €"]], ok:true},
+  {t:"Bento", c:"Formule étudiante", q:"19 rue des Sergents", d:"Cuisine asiatique avec formules étudiantes.", m:"7,90 – 9,90 €", menus:[["Formule étudiante : poulet dynamite + boisson", "7,90 €"], ["Menu étudiant (cuisine asiatique)", "8,80 – 9,90 €"]], ok:true},
+  {t:"O'Paradise", c:"Formule étudiante", q:"Amiens centre", d:"Burgers à prix étudiant.", m:"9,90 €", menus:[["Burger + boisson (carte étudiante)", "9,90 €"]], ok:true},
+  {t:"Lusitalia", c:"Formule étudiante", q:"3 rue des Sergents", d:"Pizzas et cuisine italienne.", m:"9,90 €", menus:[["Formule étudiante (pizzas / italien)", "9,90 €"]], ok:true},
+  {t:"Beef N'Co", c:"Formule étudiante", q:"12 rue Léon Blum", d:"Burgers avec menu étudiant.", m:"10 €", menus:[["Menu étudiant : plat + frites + boisson", "10 €"]], ok:true},
+  {t:"Gaddar", c:"Formule étudiante", q:"Amiens centre", d:"Restaurant avec menu étudiant.", m:"11,90 €", menus:[["Menu étudiant (sur présentation de la carte étudiante)", "11,90 €"]], ok:true},
+  {t:"Allo Mario's Pizza", c:"Formule étudiante", q:"Amiens", d:"Pizzas avec formule étudiante.", m:"8,99 €", menus:[["Formule étudiante : pizza solo + boisson", "8,99 €"]], ok:true},
+  {t:"Mian Miam", c:"Formule étudiante", q:"12 place Parmentier", d:"Cuisine asiatique, menu du midi pour les étudiants.", m:"14,90 €", menus:[["Menu midi étudiant (carte étudiante)", "14,90 €"]], ok:true},
   // Burgers
   {t:"GOMU Burger", c:"Burgers", q:"20 rue de Noyon", d:"Burgers et fast-food.", m:"≈ 10 – 15 €", ok:true},
   {t:"ROB Burger", c:"Burgers", q:"11 rue Léon Blum", d:"Burgers et fast-food.", m:"≈ 10 – 15 €", ok:true},
@@ -57,16 +61,16 @@ const courses = [
   {t:"Sushi Tori Amiens", c:"Asiatique", q:"24 rue Lucien Fournier", d:"Sushis.", m:"≈ 10 – 20 €", ok:true},
   {t:"Okaeri", c:"Asiatique", q:"8 rue Gresset", d:"Cuisine asiatique.", m:"≈ 10 – 20 €", ok:true},
   // Autres
-  {t:"Le Kimono", c:"Autres", q:"Galerie des Jacobins", d:"Plat du jour à petit prix, en plein centre.", m:"Plat du jour 7,50 €", ok:true},
+  {t:"Le Kimono", c:"Autres", q:"Galerie des Jacobins", d:"Plat du jour à petit prix, en plein centre.", m:"Plat du jour 7,50 €", menus:[["Plat du jour", "7,50 €"]], ok:true},
   {t:"Tadam Grill", c:"Autres", q:"Amiens centre", d:"Restauration rapide au grill.", m:"≈ 7,50 – 12 €", ok:true},
   {t:"MEALY", c:"Autres", q:"8 place de l'Hôtel de Ville", d:"Restauration rapide.", m:"≈ 7 – 15 €", ok:true},
   {t:"Le Phare", c:"Autres", q:"19 place Alphonse Fiquet", d:"Crêpes et restauration.", m:"≈ 10 – 18 €", ok:true},
   {t:"La Graine et les Saveurs", c:"Autres", q:"7 rue Saint-Jacques", d:"Restauration rapide, cuisine variée.", m:"≈ 10 – 20 €", ok:true},
   {t:"Grill Antalya", c:"Autres", q:"Amiens", d:"Fast-food, menu à moins de 10 € (estimation).", m:"< 10 € le menu", ok:true},
   {t:"Bodrum", c:"Autres", q:"Amiens", d:"Fast-food, menu à moins de 10 € (estimation).", m:"< 10 € le menu", ok:true},
-  {t:"Moment'O", c:"Autres", q:"Amiens", d:"Formule du midi du mardi au vendredi : plat, dessert, café offert, renouvelée chaque semaine.", m:"Formule midi 17,90 €", ok:true},
+  {t:"Moment'O", c:"Autres", q:"Amiens", d:"Formule du midi renouvelée chaque semaine.", m:"Formule midi 17,90 €", menus:[["Formule du midi (du mardi au vendredi) : plat, dessert, café offert", "17,90 €"]], ok:true},
   // Aide alimentaire
-  {t:"Croix-Rouge française : petit-déjeuner offert", c:"Aide alimentaire", q:"36 Square Friant", d:"Petit-déjeuner offert tous les matins de 8 h à 10 h pour les étudiants en difficulté.", m:"Gratuit", ok:true}
+  {t:"Croix-Rouge française : petit-déjeuner offert", c:"Aide alimentaire", q:"36 Square Friant", d:"Petit-déjeuner offert tous les matins de 8 h à 10 h pour les étudiants en difficulté.", m:"Gratuit", menus:[["Petit-déjeuner offert, tous les matins de 8 h à 10 h", "Gratuit"]], ok:true}
 ];
 
 /* ---- ACTIVITÉS : spectacles, concerts, cinéma, gratuit ---- */
@@ -91,9 +95,9 @@ const activites = [
   {t:"Cinéma Orson Welles", c:"Cinéma", q:"2 place Léon Gontier", d:"Cinéma et programmation culturelle.", m:"Tarifs selon la séance", ok:true},
   {t:"Pathé Amiens", c:"Cinéma", q:"3 boulevard de Belfort", d:"CinéCarte 5 places à 49 € (hors 3D et technos), valable 3 mois, 3 places maximum par séance.", m:"CinéCarte 49 € les 5 places", ok:true},
   // Bars & happy hours
-  {t:"Les Dés Raisonnables", c:"Bars & happy hours", q:"Amiens", d:"Happy Hour tous les jours de 17 h à 19 h : pinte de Roman à 4 € (−1 € sur les autres pintes), 2 cocktails pour 12 €, citronnade à 4,50 €. À consommer avec modération.", m:"Happy Hour 17 h – 19 h", ok:true},
-  {t:"Le Manneken Pis", c:"Bars & happy hours", q:"Amiens", d:"Happy Hour de 17 h à 22 h du lundi au samedi. Planche mixte charcuterie-fromage pour 2 personnes et une bouteille de vin (blanc, rosé ou rouge) à 19,80 €. À consommer avec modération.", m:"Planche + vin 19,80 € pour 2", ok:true},
-  {t:"Le Môme qui Pisse", c:"Bars & happy hours", q:"Amiens", d:"Les Mardis Shooters : tous les shooters à 1,50 € au lieu de 2,50 € chaque mardi soir. À consommer avec modération.", m:"Shooters 1,50 € le mardi", ok:true},
+  {t:"Les Dés Raisonnables", c:"Bars & happy hours", q:"Amiens", d:"Happy Hour tous les jours de 17 h à 19 h. À consommer avec modération.", m:"Happy Hour 17 h – 19 h", menus:[["Pinte de Roman (Happy Hour 17 h – 19 h)", "4 €"], ["Autres pintes (Happy Hour)", "−1 €"], ["2 cocktails (Happy Hour)", "12 €"], ["Citronnade", "4,50 €"]], ok:true},
+  {t:"Le Manneken Pis", c:"Bars & happy hours", q:"Amiens", d:"Happy Hour de 17 h à 22 h du lundi au samedi. À consommer avec modération.", m:"Planche + vin 19,80 € pour 2", menus:[["Planche mixte charcuterie-fromage pour 2 + bouteille de vin (blanc, rosé ou rouge)", "19,80 €"]], ok:true},
+  {t:"Le Môme qui Pisse", c:"Bars & happy hours", q:"Amiens", d:"Les Mardis Shooters. À consommer avec modération.", m:"Shooters 1,50 € le mardi", menus:[["Shooters, chaque mardi soir", "1,50 € (au lieu de 2,50 €)"]], ok:true},
   // Sorties
   {t:"Évasion au Beffroi", c:"Sorties", q:"Beffroi d'Amiens", d:"Escape game historique d'1 h, jusqu'à 6 personnes : 62 € la session, soit environ 10,30 € chacun à 6.", m:"≈ 10,30 € à 6", ok:true},
   // À venir
@@ -339,8 +343,9 @@ async function enregistrer(a){
    ÉTAT
    ============================================================ */
 let favoris = lsGet("sa_favoris", []);
-let filtre = {bp:"Toutes", courses:"Toutes", act:"Toutes", bourse:"Toutes", g0:"Tout", favOnly:false};
+let filtre = {bp:"Toutes", courses:"Toutes", act:"Toutes", bourse:"Toutes", g0:"Tout", pxc:"Tous les prix", pxa:"Tous les prix", tric:false, tria:false, favOnly:false};
 const saveFavoris = () => lsSet("sa_favoris", favoris);
+let panier = [];
 
 /* ============================================================
    NAVIGATION
@@ -356,16 +361,25 @@ function go(page){
   });
   if (page === "copanier") { const f = $("copanierFrame"); if (!f.getAttribute("src")) f.setAttribute("src", "copanier.html?embed=1"); }
   toggleMenu(false);
+  if (typeof fermerCompte === "function" && $("compte").open) fermerCompte();
   window.scrollTo({top:0, behavior:"smooth"});
 }
 function toggleMenu(open){
   $("drawer").classList.toggle("open", open);
   $("overlay").classList.toggle("open", open);
+  const croix = $("drawer").querySelector(".drawer-close");
+  if (open && croix) croix.focus();
 }
 
 /* ============================================================
    RENDU
    ============================================================ */
+const FOOD_CATS = ["CROUS","Formule étudiante","Burgers","Tacos & kebabs","Poulet","Pizzas","Asiatique","Autres","Aide alimentaire","Bars & happy hours","Manger"];
+function menusHTML(it, vide = true){
+  const l = Array.isArray(it.menus) ? it.menus.filter(x => Array.isArray(x) && x.length >= 2) : [];
+  if (l.length) return `<div class="menus"><p class="menus-t">Menus &amp; prix</p><ul>${l.map(([n, p]) => `<li><span>${esc(n)}</span><b>${esc(p)}</b></li>`).join("")}</ul></div>`;
+  return vide && FOOD_CATS.includes(it.c) ? `<p class="menus-vide">Carte détaillée à compléter.</p>` : "";
+}
 function carteHTML(item){
   const k = keyOf(item), on = favoris.includes(k);
   const tag = item.c ? `<span class="card-tag">${esc(item.c)}${item.cat ? " · " + esc(item.cat) : ""}</span>` : "";
@@ -373,16 +387,20 @@ function carteHTML(item){
     : item.ts ? `<p class="card-meta">${esc(item.contact)} · ${esc(depuis(item.ts))}</p>` : "";
   let badge = "";
   if (item.demo) badge = `<span class="badge demo">Annonce d'exemple</span>`;
+  else if (!actif(item)) badge = `<span class="badge">Terminé</span>`;
   else if (!item.ts && !item.ok) badge = `<span class="badge">À vérifier</span>`;
   const suppr = item.own ? `<button class="del" data-del="${esc(item.id)}">Supprimer mon annonce</button>` : "";
   const det = DETAILS[item.t];
-  const plus = det ? `<button class="more" data-detail="${esc(item.t)}">Voir la fiche →</button>` : "";
+  const voir = det ? `<button class="more" data-detail="${esc(item.t)}">Voir la fiche →</button>` : "";
+  const dp = dansPanier(k);
+  const plus = `<div class="card-actions">${voir}<button type="button" class="pan-btn ${dp ? "on" : ""}" data-panier="${esc(k)}" aria-pressed="${dp}">${dp ? "✓ Dans mon panier" : "🛒 Ajouter au panier"}</button></div>`;
   return `<article class="card${det ? " clickable" : ""}"${det ? ` data-detail="${esc(item.t)}"` : ""}>
     ${tag}
     <button class="fav ${on ? "on" : ""}" data-fav="${esc(k)}" aria-pressed="${on}" aria-label="${on ? "Retirer des favoris" : "Ajouter aux favoris"} : ${esc(item.t)}">${on ? "★" : "☆"}</button>
     <h3>${esc(item.t)}</h3>
     ${item.q ? `<p class="card-loc">📍 ${esc(item.q)}</p>` : ""}
     <p>${esc(item.d)}</p>
+    ${menusHTML(item)}
     ${meta}${badge}${suppr}${plus}
   </article>`;
 }
@@ -399,17 +417,51 @@ function renderBonsPlans(){
   $("grilleBonsPlans").innerHTML = res.length ? res.map(carteHTML).join("")
     : `<div class="empty">Aucun bon plan ne correspond à cette recherche.</div>`;
 }
+/* ---- Filtre par prix (pages Manger et Activités) ---- */
+const PRIX_CHIPS = ["Tous les prix", "Gratuit", "≤ 5 €", "≤ 10 €", "≤ 15 €"];
+function prixMin(it){
+  if (typeof it.p === "number") return it.p;
+  const lire = s => { const r = String(s || "").match(/(\d+(?:[.,]\d+)?)(?:\s*[–-]\s*\d+(?:[.,]\d+)?)?\s*€/); return r ? parseFloat(r[1].replace(",", ".")) : null; };
+  const direct = lire(it.m);
+  if (direct !== null) return direct;
+  if (/gratuit|entrée libre/i.test(String(it.m || ""))) return 0;
+  if (Array.isArray(it.menus)) {
+    const l = it.menus.map(x => Array.isArray(x) ? lire(x[1]) : null).filter(v => v !== null && v > 0);
+    if (l.length) return Math.min(...l);
+  }
+  return null;
+}
+function appliquerPrix(liste, choix, tri){
+  let res = liste, masques = 0;
+  if (choix !== "Tous les prix") {
+    const lim = choix === "Gratuit" ? 0 : Number(choix.replace(/\D/g, ""));
+    res = liste.filter(it => { const p = prixMin(it); if (p === null) { masques++; return false; } return p <= lim; });
+  }
+  if (tri) res = [...res].sort((a, b) => (prixMin(a) ?? 1e9) - (prixMin(b) ?? 1e9));
+  return {res, masques};
+}
+const chipsPrixHTML = (cle, tri, actionTri) =>
+  PRIX_CHIPS.map(c => `<button class="chip small ${filtre[cle] === c ? "active" : ""}" data-filter="${cle}" data-v="${esc(c)}">${esc(c)}</button>`).join("") +
+  `<button class="chip small ${tri ? "active" : ""}" data-action="${actionTri}" aria-pressed="${!!tri}">↑ Prix croissant</button>`;
+const noteMasques = n => n ? n + " lieu" + (n > 1 ? "x" : "") + " sans prix précis " + (n > 1 ? "masqués" : "masqué") + " avec ce filtre." : "";
+
 function renderCourses(){
   $("chipsCourses").innerHTML = chipsHTML(["Toutes","Formule étudiante","CROUS","Burgers","Tacos & kebabs","Poulet","Pizzas","Asiatique","Autres","Aide alimentaire"], "courses", "courses");
   const q = $("rechercheCourses").value.toLowerCase().trim();
-  const res = courses.filter(c => (filtre.courses === "Toutes" || c.c === filtre.courses) && (!q || (c.t + (c.q||"") + c.d).toLowerCase().includes(q)));
-  $("grilleCourses").innerHTML = res.length ? res.map(carteHTML).join("") : `<div class="empty">Rien ici pour l'instant.</div>`;
+  const base = courses.filter(c => (filtre.courses === "Toutes" || c.c === filtre.courses) && (!q || (c.t + (c.q||"") + c.d).toLowerCase().includes(q)));
+  $("prixCourses").innerHTML = chipsPrixHTML("pxc", filtre.tric, "tri-courses");
+  const {res, masques} = appliquerPrix(base, filtre.pxc, filtre.tric);
+  $("noteCourses").textContent = noteMasques(masques);
+  $("grilleCourses").innerHTML = res.length ? res.map(carteHTML).join("") : `<div class="empty">Aucun lieu ne correspond à ces filtres.</div>`;
 }
 function renderActivites(){
   $("chipsActivites").innerHTML = chipsHTML(["Toutes", ...new Set(activites.map(a => a.c))], "act", "act");
   const q = $("rechercheActivites").value.toLowerCase().trim();
-  const res = activites.filter(actif).filter(a => (filtre.act === "Toutes" || a.c === filtre.act) && (!q || (a.t + a.q + a.d).toLowerCase().includes(q)));
-  $("grilleActivites").innerHTML = res.length ? res.map(carteHTML).join("") : `<div class="empty">Aucune activité ne correspond.</div>`;
+  const base = activites.filter(actif).filter(a => (filtre.act === "Toutes" || a.c === filtre.act) && (!q || (a.t + a.q + a.d).toLowerCase().includes(q)));
+  $("prixActivites").innerHTML = chipsPrixHTML("pxa", filtre.tria, "tri-act");
+  const {res, masques} = appliquerPrix(base, filtre.pxa, filtre.tria);
+  $("noteActivites").textContent = noteMasques(masques);
+  $("grilleActivites").innerHTML = res.length ? res.map(carteHTML).join("") : `<div class="empty">Aucune activité ne correspond à ces filtres.</div>`;
 }
 function renderGratuit(){
   $("chipsG0").innerHTML = chipsHTML(["Tout", "Bons plans", "Activités"], "g0", "g0");
@@ -431,9 +483,7 @@ function renderBourse(){
     : `<div class="empty">Aucune annonce dans cette catégorie pour le moment.</div>`;
 }
 function renderFavoris(){
-  const tous = [...bonsPlans, ...courses, ...activites, ...GRATUITS, ...annonces(), ...idees.map(i => ({...i, m:euros(i.p), ok:true}))];
-  const vus = new Set();
-  const res = tous.filter(actif).filter(o => { const k = keyOf(o); if (!favoris.includes(k) || vus.has(k)) return false; vus.add(k); return true; });
+  const res = catalogue().filter(actif).filter(o => favoris.includes(keyOf(o)));
   const badge = $("favCount");
   badge.textContent = res.length; badge.hidden = res.length === 0;
   $("btnFav").setAttribute("aria-label", res.length ? "Mes favoris (" + res.length + ")" : "Mes favoris");
@@ -448,11 +498,13 @@ const MOMENTS = [{k:"matin", l:"Ce matin", h:"Matin"},{k:"midi", l:"Ce midi", h:
 const ENVIES = ["Un peu de tout","Manger","Découvrir","Bouger","Sortir"];
 const ORDRE = {matin:0, midi:1, aprem:2, soir:3};
 const momentActuel = () => { const h = new Date().getHours(); return h < 11 ? "matin" : h < 14 ? "midi" : h < 18 ? "aprem" : "soir"; };
-let jour = {budget:10, moment:momentActuel(), envie:"Un peu de tout", tirage:0, nbIdees:6};
+function budgetSauve(){ const b = Number(lsGet("sa_budget", 10)); return Number.isFinite(b) ? Math.min(30, Math.max(0, Math.round(b))) : 10; }
+let jour = {budget:budgetSauve(), moment:momentActuel(), envie:"Un peu de tout", tirage:0, nbIdees:6};
 
 function reset(){ jour.tirage = 0; jour.nbIdees = 6; renderAujourdhui(); }
 function setBudget(v){
   jour.budget = Number(v);
+  lsSet("sa_budget", jour.budget);
   const n = $("budgetNum");
   n.textContent = jour.budget;
   n.classList.remove("bump"); void n.offsetWidth; n.classList.add("bump");
@@ -519,7 +571,7 @@ function renderIdees(){
   $("ideas").innerHTML = res.length ? res.slice(0, jour.nbIdees).map(i => `
       <article class="idea">
         <h4><small>${esc(i.c)}</small>${esc(i.t)}</h4>
-        <span class="idea-r"><span class="price ${i.p === 0 ? "free" : ""}">${euros(i.p)}</span>${(() => { const k = keyOf(i), on = favoris.includes(k); return `<button class="fav ${on ? "on" : ""}" data-fav="${esc(k)}" aria-pressed="${on}" aria-label="${on ? "Retirer des favoris" : "Ajouter aux favoris"} : ${esc(i.t)}">${on ? "★" : "☆"}</button>`; })()}</span>
+        <span class="idea-r"><span class="price ${i.p === 0 ? "free" : ""}">${euros(i.p)}</span>${(() => { const k = keyOf(i), on = favoris.includes(k); return `<button class="fav ${on ? "on" : ""}" data-fav="${esc(k)}" aria-pressed="${on}" aria-label="${on ? "Retirer des favoris" : "Ajouter aux favoris"} : ${esc(i.t)}">${on ? "★" : "☆"}</button>`; })()}${(() => { const k = keyOf(i), dp = dansPanier(k); return `<button type="button" class="pan-ico ${dp ? "on" : ""}" data-panier="${esc(k)}" aria-pressed="${dp}" aria-label="${dp ? "Retirer du panier" : "Ajouter au panier"} : ${esc(i.t)}">🛒</button>`; })()}</span>
         <p>${esc(i.q)} · ${esc(i.d)}</p>
       </article>`).join("")
     : `<div class="empty" style="margin-top:0;">Aucune idée pour ce créneau. Essaie un autre moment ou une autre envie.</div>`;
@@ -527,6 +579,7 @@ function renderIdees(){
 }
 function renderAujourdhui(){
   const r = $("budgetRange");
+  r.value = jour.budget; $("budgetNum").textContent = jour.budget;
   r.style.setProperty("--pct", (jour.budget / r.max * 100) + "%");
   $("chipsBudget").innerHTML = [0,5,10,20].map(b =>
     `<button class="chip small ${jour.budget === b ? "active" : ""}" data-budget="${b}">${b === 0 ? "0 €, fauché" : b + " €"}</button>`).join("");
@@ -556,7 +609,7 @@ function renderAccueil(){
     <div class="mini-annonce"><div><strong>${esc(a.t)}</strong><span>${esc(a.q)} · ${esc(depuis(a.ts))}</span></div><em>${esc(a.c)}</em></div>`).join("")
     || `<div class="mini-annonce"><div><strong>Pas encore d'annonce</strong><span>Sois le premier à en déposer une</span></div></div>`;
 }
-const renderAll = () => { renderMarches(); renderGratuit(); renderBonsPlans(); renderCourses(); renderActivites(); renderBourse(); renderFavoris(); renderAccueil(); };
+const renderAll = () => { renderPanier(); renderMarches(); renderGratuit(); renderBonsPlans(); renderCourses(); renderActivites(); renderBourse(); renderFavoris(); renderAccueil(); };
 
 /* ============================================================
    ACTIONS
@@ -614,15 +667,18 @@ function ouvrirFiche(titre){
   $("ficheTitre").textContent = item.t;
   $("ficheCorps").innerHTML = `
     <div class="bloc"><h3>${esc(d.lab || "Petite histoire")}</h3><p>${esc(d.h)}</p></div>
+    ${menusHTML(item, false)}
     <dl class="fiche-grid">
       <div><dt>💶 Budget</dt><dd>${esc(d.budget)}</dd></div>
       <div><dt>⏱ Temps estimé</dt><dd>${esc(d.duree)}</dd></div>
       <div><dt>📍 Localisation</dt><dd>${esc(lieu)}</dd></div>
     </dl>
     <button type="button" class="btn-star" id="btnStar" data-fav="${esc(keyOf(item))}"></button>
+    <button type="button" class="btn-star btn-pan" id="btnPan" data-panier="${esc(keyOf(item))}"></button>
     <a class="btn-maps" href="https://www.google.com/maps/search/?api=1&query=${requete}" target="_blank" rel="noopener noreferrer">Voir sur la carte</a>
     <p class="fiche-note">Prix et durées indicatifs : vérifie les horaires avant de te déplacer.</p>`;
   majBtnStar($("btnStar"));
+  majBtnPan($("btnPan"));
   const dlg = $("fiche");
   if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open", "");
 }
@@ -633,17 +689,400 @@ function toast(msg){
   clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
 }
 
+/* ============================================================
+   COMPTE ÉTUDIANT + PANIER
+   - Sans configuration : compte « local » (enregistré sur l'appareil, mot de passe haché).
+   - Avec BACKEND (Supabase) : vrai compte en ligne (inscription, e-mail de confirmation,
+     connexion, mot de passe oublié, suppression) et panier synchronisé sur tous les appareils.
+   ============================================================ */
+const DOMAINES_ETUDIANTS = ["u-picardie.fr", "etud.u-picardie.fr"]; // à vérifier avec l'université
+const EXIGER_EMAIL_ETUDIANT = false;                                  // true = refuse les autres e-mails
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const ETABLISSEMENTS = ["Université de Picardie Jules Verne (UPJV)", "Autre université", "École (ingénieur, commerce, art…)", "BTS / IUT / lycée", "Autre"];
+const enLigne = shared;
+const cleSession = "sa_session", cleComptes = "sa_comptes", cleSb = "sa_sb";
+class ErrUtilisateur extends Error {}
+const ko = m => new ErrUtilisateur(m);
+const lsDel = k => { try { localStorage.removeItem(k); } catch(e){} };
+
+let user = null;      // {id, email, prenom, etab, created}
+let session = null;   // en ligne : {access_token, refresh_token, expires_at}
+let vueCompte = "inscription";
+let confirmSuppr = false;
+
+const estEmailEtudiant = email => { const d = (email.split("@")[1] || "").toLowerCase(); return DOMAINES_ETUDIANTS.some(x => d === x || d.endsWith("." + x)); };
+function verifierMdp(m){
+  if (m.length < 8) return "Le mot de passe doit contenir au moins 8 caractères.";
+  if (!/[A-Za-z]/.test(m) || !/\d/.test(m)) return "Le mot de passe doit contenir au moins une lettre et un chiffre.";
+  return "";
+}
+
+/* ---------- Panier ---------- */
+const clePanier = () => "sa_panier_" + (user ? user.id : "invite");
+const CHAMPS_PANIER = ["id","t","c","cat","q","d","m","p","ts","contact","demo","fin","ok","menus"];
+function chargerPanier(){
+  const brut = lsGet(clePanier(), []);
+  panier = Array.isArray(brut) ? brut.filter(x => x && typeof x.t === "string") : [];
+}
+function sauverPanier(){ lsSet(clePanier(), panier); if (user && enLigne) planifierSyncPanier(); }
+function instantane(it){
+  const o = {};
+  CHAMPS_PANIER.forEach(f => { if (it[f] !== undefined) o[f] = it[f]; });
+  if (typeof o.d === "string" && o.d.length > 400) o.d = o.d.slice(0, 400);
+  if (o.menus !== undefined) o.menus = Array.isArray(o.menus) ? o.menus.filter(x => Array.isArray(x) && x.length >= 2).slice(0, 12).map(x => [String(x[0]).slice(0, 160), String(x[1]).slice(0, 40)]) : [];
+  return o;
+}
+const dansPanier = k => panier.some(x => keyOf(x) === k);
+function catalogue(){
+  const tous = [...bonsPlans, ...courses, ...activites, ...GRATUITS, ...annonces(), ...idees.map(i => ({...i, m:euros(i.p), ok:true}))];
+  const vus = new Set();
+  return tous.filter(o => { const k = keyOf(o); if (vus.has(k)) return false; vus.add(k); return true; });
+}
+function prixIndicatif(it){
+  if (typeof it.p === "number") return it.p;
+  const m = String(it.m || "");
+  const r = m.match(/(\d+(?:[.,]\d+)?)\s*€/);
+  if (r) return parseFloat(r[1].replace(",", "."));
+  if (/gratuit|entrée libre/i.test(m)) return 0;
+  return null;
+}
+const arrondi = n => Math.round(n * 100) / 100;
+function basculerPanier(k){
+  const i = panier.findIndex(x => keyOf(x) === k);
+  if (i > -1) { panier.splice(i, 1); toast("Retiré de ton panier"); }
+  else {
+    const it = catalogue().find(o => keyOf(o) === k);
+    if (!it) return;
+    panier.push(instantane(it)); toast("Ajouté à ton panier 🛒");
+  }
+  sauverPanier(); renderAll(); renderIdees();
+  document.querySelectorAll(".btn-pan[data-panier]").forEach(majBtnPan);
+}
+function majBtnPan(b){
+  const on = dansPanier(b.dataset.panier);
+  b.classList.toggle("on", on);
+  b.textContent = on ? "✓ Dans mon panier" : "🛒 Ajouter au panier";
+}
+function renderPanier(){
+  const n = panier.length;
+  const badge = $("panCount"); badge.textContent = n; badge.hidden = n === 0;
+  $("btnPanier").setAttribute("aria-label", n ? "Mon panier (" + n + ")" : "Mon panier");
+  let total = 0, sans = 0;
+  panier.filter(actif).forEach(it => { const p = prixIndicatif(it); if (p === null) sans++; else total += p; });
+  $("panierBanniere").innerHTML = user
+    ? `<div class="pan-banniere"><span>Panier de <strong>${esc(user.prenom)}</strong> · enregistré ${enLigne ? "sur ton compte" : "sur cet appareil"}.</span></div>`
+    : `<div class="pan-banniere"><span>Crée ton compte étudiant pour retrouver ton panier à chaque visite${enLigne ? ", sur tous tes appareils" : " (sur cet appareil)"}.</span><button type="button" class="btn-primary" data-action="compte-open">Créer mon compte</button></div>`;
+  $("panierResume").innerHTML = n ? `<div class="pan-resume">
+      <div class="pan-total"><strong>${total === 0 ? "0 €" : euros(arrondi(total))}</strong><span>Budget estimé · ${n} élément${n > 1 ? "s" : ""}${sans ? " · " + sans + " sans prix connu" : ""}</span></div>
+      <div class="pan-actions"><button type="button" class="btn-ghost" data-action="panier-copier">Copier ma liste</button><button type="button" class="btn-ghost" data-action="panier-vider">Vider le panier</button></div>
+    </div>` : "";
+  $("grillePanier").innerHTML = n ? panier.map(carteHTML).join("")
+    : `<div class="empty">Ton panier est vide. Touche « 🛒 Ajouter au panier » sur une carte pour la garder ici.</div>`;
+}
+function copierPanier(){
+  const lignes = panier.map(it => { const p = prixIndicatif(it); return "- " + it.t + (it.q ? " (" + it.q + ")" : "") + " : " + (p === null ? "prix à vérifier" : p === 0 ? "gratuit" : euros(p)); });
+  const texte = "Mon panier StudiAmiens\n" + lignes.join("\n");
+  const ok = () => toast("Liste copiée ✓");
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(texte).then(ok, () => toast("Copie impossible sur ce navigateur"));
+  else toast("Copie impossible sur ce navigateur");
+}
+function fusionnerPanier(autres){
+  const vus = new Set(panier.map(keyOf));
+  (Array.isArray(autres) ? autres : []).forEach(it => {
+    if (it && typeof it.t === "string" && !vus.has(keyOf(it))) { panier.push(instantane(it)); vus.add(keyOf(it)); }
+  });
+  sauverPanier(); renderAll();
+}
+
+/* ---------- Comptes locaux ---------- */
+const b64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
+const deb64 = s => Uint8Array.from(atob(s), ch => ch.charCodeAt(0));
+async function deriver(mdp, sel, iter){
+  if (!window.crypto || !crypto.subtle) throw ko("Ce navigateur ne permet pas de créer un compte sécurisé. Essaie avec un navigateur à jour.");
+  const cle = await crypto.subtle.importKey("raw", new TextEncoder().encode(mdp), "PBKDF2", false, ["deriveBits"]);
+  return b64(await crypto.subtle.deriveBits({name:"PBKDF2", hash:"SHA-256", salt:sel, iterations:iter}, cle, 256));
+}
+function ouvrirSessionLocale(c){
+  user = {id:c.id, email:c.email, prenom:c.prenom, etab:c.etab, created:c.created};
+  lsSet(cleSession, {id:c.id});
+}
+async function inscrireLocal(d){
+  const comptes = lsGet(cleComptes, []);
+  if (comptes.some(c => c.email === d.email)) throw ko("Un compte existe déjà avec cet e-mail. Connecte-toi plutôt.");
+  const sel = crypto.getRandomValues(new Uint8Array(16)), iter = 150000;
+  const c = {id:"u" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8), email:d.email, prenom:d.prenom, etab:d.etab,
+    sel:b64(sel), iter, hash:await deriver(d.mdp, sel, iter), created:new Date().toISOString()};
+  comptes.push(c); lsSet(cleComptes, comptes);
+  if (!lsGet(cleComptes, []).some(x => x.id === c.id)) throw ko("Impossible d'enregistrer le compte : le stockage du navigateur est bloqué.");
+  ouvrirSessionLocale(c);
+}
+async function connecterLocal(email, mdp){
+  const c = lsGet(cleComptes, []).find(x => x.email === email);
+  const mauvais = ko("E-mail ou mot de passe incorrect.");
+  if (!c) throw mauvais;
+  if (await deriver(mdp, deb64(c.sel), c.iter) !== c.hash) throw mauvais;
+  ouvrirSessionLocale(c);
+}
+
+/* ---------- Comptes en ligne (Supabase Auth) ---------- */
+function messageErreurSb(d){
+  const m = String(d && (d.msg || d.error_description || d.message || d.error) || "");
+  if (/already (been )?registered/i.test(m)) return "Un compte existe déjà avec cet e-mail. Connecte-toi plutôt.";
+  if (/invalid login/i.test(m)) return "E-mail ou mot de passe incorrect.";
+  if (/not confirmed/i.test(m)) return "Confirme d'abord ton e-mail (lien reçu par message), puis reconnecte-toi.";
+  if (/password/i.test(m) && /(short|weak|least|characters)/i.test(m)) return "Mot de passe trop faible : 8 caractères minimum.";
+  if (/rate limit|too many|security purposes/i.test(m)) return "Trop de tentatives. Réessaie dans quelques minutes.";
+  return "Une erreur est survenue. Réessaie dans un instant.";
+}
+async function sb(chemin, {method = "GET", body, token, headers = {}} = {}){
+  const r = await fetch(BACKEND.url + chemin, {
+    method, body: body ? JSON.stringify(body) : undefined,
+    headers: {apikey:BACKEND.key, Authorization:"Bearer " + (token || BACKEND.key), "Content-Type":"application/json", ...headers}
+  });
+  const txt = await r.text(); let data = null;
+  try { data = txt ? JSON.parse(txt) : null; } catch(e){}
+  if (!r.ok) throw ko(messageErreurSb(data));
+  return data;
+}
+const userDepuisSb = u => { const meta = u.user_metadata || {}; return {id:u.id, email:u.email, prenom:meta.prenom || String(u.email || "").split("@")[0], etab:meta.etab || "", created:u.created_at}; };
+function ouvrirSessionSb(tok){
+  if (tok.user) user = userDepuisSb(tok.user);
+  session = {access_token:tok.access_token, refresh_token:tok.refresh_token, expires_at:Date.now() + (Number(tok.expires_in) || 3600) * 1000};
+  lsSet(cleSb, {...session, user});
+}
+function viderSessionSb(){ session = null; lsDel(cleSb); }
+async function rafraichirSb(){
+  if (!session) return false;
+  try { ouvrirSessionSb(await sb("/auth/v1/token?grant_type=refresh_token", {method:"POST", body:{refresh_token:session.refresh_token}})); return true; }
+  catch(e){ viderSessionSb(); return false; }
+}
+async function jetonValide(){
+  if (!session) return null;
+  if (session.expires_at - Date.now() < 60000 && !(await rafraichirSb())) return null;
+  return session ? session.access_token : null;
+}
+async function inscrireSb(d){
+  const r = await sb("/auth/v1/signup", {method:"POST", body:{email:d.email, password:d.mdp, data:{prenom:d.prenom, etab:d.etab}}});
+  if (r && r.access_token) { ouvrirSessionSb(r); return "connecte"; }
+  return "confirmer";
+}
+async function connecterSb(email, mdp){
+  ouvrirSessionSb(await sb("/auth/v1/token?grant_type=password", {method:"POST", body:{email, password:mdp}}));
+}
+let tSync = null;
+function planifierSyncPanier(){ clearTimeout(tSync); tSync = setTimeout(pousserPanier, 700); }
+async function pousserPanier(){
+  try {
+    const tok = await jetonValide(); if (!tok || !user) return;
+    await sb("/rest/v1/paniers?on_conflict=user_id", {method:"POST", token:tok, headers:{Prefer:"resolution=merge-duplicates,return=minimal"},
+      body:{user_id:user.id, items:panier, updated_at:new Date().toISOString()}});
+  } catch(e){}
+}
+async function tirerPanier(){
+  try {
+    const tok = await jetonValide(); if (!tok || !user) return;
+    const r = await sb("/rest/v1/paniers?select=items&user_id=eq." + encodeURIComponent(user.id), {token:tok});
+    fusionnerPanier(r && r[0] ? r[0].items : []);
+  } catch(e){}
+}
+async function traiterRetourEmail(){
+  if (!enLigne || location.hash.length < 20) return;
+  const p = new URLSearchParams(location.hash.slice(1));
+  const tok = p.get("access_token"); if (!tok) return;
+  const type = p.get("type");
+  history.replaceState(null, "", location.pathname + location.search);
+  try {
+    const u = await sb("/auth/v1/user", {token:tok});
+    ouvrirSessionSb({access_token:tok, refresh_token:p.get("refresh_token"), expires_in:p.get("expires_in"), user:u});
+    apresConnexion();
+    if (type === "recovery") ouvrirCompte("nouveau-mdp"); else toast("E-mail confirmé, bienvenue ! 🎓");
+  } catch(e){ toast("Ce lien n'est plus valide. Demande un nouvel e-mail."); }
+}
+
+/* ---------- Session ---------- */
+function restaurerSession(){
+  if (enLigne) {
+    const s = lsGet(cleSb, null);
+    if (s && s.access_token && s.user) { session = {access_token:s.access_token, refresh_token:s.refresh_token, expires_at:s.expires_at}; user = s.user; }
+  } else {
+    const s = lsGet(cleSession, null);
+    const c = s && lsGet(cleComptes, []).find(x => x.id === s.id);
+    if (c) user = {id:c.id, email:c.email, prenom:c.prenom, etab:c.etab, created:c.created};
+  }
+}
+function apresConnexion(){
+  const invite = lsGet("sa_panier_invite", []);
+  chargerPanier();
+  fusionnerPanier(invite);
+  lsDel("sa_panier_invite");
+  if (enLigne) tirerPanier();
+  majBoutonCompte(); renderAll();
+}
+async function deconnecter(){
+  const ancien = user;
+  if (enLigne && session) { try { await sb("/auth/v1/logout", {method:"POST", token:session.access_token}); } catch(e){} }
+  if (enLigne) { viderSessionSb(); if (ancien) lsDel("sa_panier_" + ancien.id); } else lsDel(cleSession);
+  user = null; confirmSuppr = false; vueCompte = "connexion";
+  chargerPanier(); majBoutonCompte(); renderAll(); renderIdees();
+  fermerCompte(); toast("Tu es déconnecté·e");
+}
+async function supprimerCompte(){
+  const ancien = user;
+  if (enLigne) {
+    const tok = await jetonValide();
+    if (!tok) throw ko("Ta session a expiré. Reconnecte-toi puis réessaie.");
+    await sb("/rest/v1/rpc/supprimer_mon_compte", {method:"POST", token:tok, body:{}});
+    viderSessionSb();
+  } else {
+    lsSet(cleComptes, lsGet(cleComptes, []).filter(c => c.id !== ancien.id));
+    lsDel(cleSession);
+  }
+  lsDel("sa_panier_" + ancien.id);
+  user = null; confirmSuppr = false; vueCompte = "inscription";
+  chargerPanier(); majBoutonCompte(); renderAll(); renderIdees();
+  fermerCompte(); toast("Ton compte a été supprimé");
+}
+
+/* ---------- Interface du compte ---------- */
+function majBoutonCompte(){
+  const b = $("btnCompte");
+  b.classList.toggle("connecte", !!user);
+  $("compteLblFull").textContent = user ? user.prenom : "Créer ton compte étudiant";
+  $("compteLblShort").textContent = user ? user.prenom : "Compte";
+  b.setAttribute("aria-label", user ? "Mon compte : " + user.prenom : "Créer ton compte étudiant");
+  $("drawerCompte").textContent = user ? "Mon compte (" + user.prenom + ")" : "Créer ton compte étudiant";
+}
+function ouvrirCompte(vue){
+  confirmSuppr = false;
+  vueCompte = vue || (user ? "profil" : "inscription");
+  rendreCompte();
+  const dlg = $("compte");
+  if (dlg.showModal) { if (!dlg.open) dlg.showModal(); } else dlg.setAttribute("open", "");
+}
+function fermerCompte(){ const dlg = $("compte"); if (dlg.close) dlg.close(); else dlg.removeAttribute("open"); }
+function rendreCompte(){
+  if (user && vueCompte !== "nouveau-mdp") vueCompte = "profil";
+  if (!user && (vueCompte === "profil" || vueCompte === "nouveau-mdp")) vueCompte = "connexion";
+  const info = enLigne
+    ? `<p class="compte-info">🔒 Ton compte est créé en ligne : tu retrouves ton panier sur tous tes appareils.</p>`
+    : `<p class="compte-info">ℹ️ Mode démo : ton compte reste enregistré sur cet appareil uniquement. Aucune donnée n'est envoyée sur internet.</p>`;
+  const vues = {
+    inscription: () => ({kicker:"Compte étudiant", titre:"Crée ton compte étudiant", html: info + `
+      <form id="formInscription" novalidate autocomplete="on"><div class="form-grid">
+        <div class="field"><label for="iPrenom">Prénom ou pseudo</label><input id="iPrenom" type="text" maxlength="30" autocomplete="given-name" required></div>
+        <div class="field"><label for="iEmail">E-mail</label><input id="iEmail" type="email" maxlength="120" autocomplete="email" placeholder="prenom.nom@etud.u-picardie.fr" required><p class="hint">Utilise de préférence ton e-mail étudiant.</p></div>
+        <div class="field"><label for="iEtab">Établissement</label><select id="iEtab">${ETABLISSEMENTS.map(x => `<option>${esc(x)}</option>`).join("")}</select></div>
+        <div class="field"><label for="iMdp">Mot de passe</label><div class="mdp-wrap"><input id="iMdp" type="password" maxlength="100" autocomplete="new-password" required><button type="button" class="mdp-voir" data-action="mdp-voir" data-cible="iMdp">Afficher</button></div><p class="hint">8 caractères minimum, avec au moins une lettre et un chiffre.</p></div>
+        <div class="field"><label for="iMdp2">Confirmer le mot de passe</label><input id="iMdp2" type="password" maxlength="100" autocomplete="new-password" required></div>
+        <label class="case"><input type="checkbox" id="iCgu"><span>J'accepte que mon prénom, mon e-mail, mon établissement et mon panier soient enregistrés pour faire fonctionner mon compte. Je peux supprimer mon compte à tout moment. <a href="confidentialite.html" target="_blank" rel="noopener">Politique de confidentialité</a>.</span></label>
+      </div><p class="form-err" id="compteErr" role="alert"></p>
+      <button type="submit" class="btn-primary">Créer mon compte</button></form>
+      <p class="compte-bas">Déjà un compte ? <button type="button" class="lien-btn" data-action="compte-vue" data-vue="connexion">Se connecter</button></p>`}),
+    connexion: () => ({kicker:"Compte étudiant", titre:"Content de te revoir", html: info + `
+      <form id="formConnexion" novalidate autocomplete="on"><div class="form-grid">
+        <div class="field"><label for="cEmail">E-mail</label><input id="cEmail" type="email" autocomplete="email" required></div>
+        <div class="field"><label for="cMdp">Mot de passe</label><div class="mdp-wrap"><input id="cMdp" type="password" autocomplete="current-password" required><button type="button" class="mdp-voir" data-action="mdp-voir" data-cible="cMdp">Afficher</button></div></div>
+      </div><p class="form-err" id="compteErr" role="alert"></p>
+      <button type="submit" class="btn-primary">Se connecter</button></form>
+      <p class="compte-bas"><button type="button" class="lien-btn" data-action="compte-vue" data-vue="oubli">Mot de passe oublié ?</button></p>
+      <p class="compte-bas">Pas encore de compte ? <button type="button" class="lien-btn" data-action="compte-vue" data-vue="inscription">Créer mon compte</button></p>`}),
+    oubli: () => ({kicker:"Compte étudiant", titre:"Mot de passe oublié", html: enLigne ? `
+      <p class="compte-info">Indique ton e-mail : si un compte existe, tu recevras un lien pour choisir un nouveau mot de passe.</p>
+      <form id="formOubli" novalidate><div class="form-grid"><div class="field"><label for="oEmail">E-mail</label><input id="oEmail" type="email" autocomplete="email" required></div></div>
+      <p class="form-err" id="compteErr" role="alert"></p><button type="submit" class="btn-primary">Envoyer le lien</button></form>
+      <p class="compte-bas"><button type="button" class="lien-btn" data-action="compte-vue" data-vue="connexion">← Retour à la connexion</button></p>` : `
+      <p class="compte-info">En mode démo, il n'y a pas d'e-mail de réinitialisation : le compte est enregistré sur cet appareil uniquement. Tu peux créer un nouveau compte avec une autre adresse.</p>
+      <p class="compte-bas"><button type="button" class="lien-btn" data-action="compte-vue" data-vue="connexion">← Retour à la connexion</button></p>`}),
+    confirmer: () => ({kicker:"Presque fini", titre:"Vérifie ta boîte mail", html: `
+      <div class="confirm-mail"><div class="big" aria-hidden="true">✉️</div>
+      <p>On t'a envoyé un lien de confirmation. Clique dessus pour activer ton compte, puis reviens te connecter.</p>
+      <p class="hint">Pense à regarder dans les courriers indésirables.</p></div>
+      <p class="compte-bas"><button type="button" class="lien-btn" data-action="compte-vue" data-vue="connexion">Se connecter</button></p>`}),
+    "nouveau-mdp": () => ({kicker:"Compte étudiant", titre:"Choisis un nouveau mot de passe", html: `
+      <form id="formNouveauMdp" novalidate><div class="form-grid">
+        <div class="field"><label for="nMdp">Nouveau mot de passe</label><div class="mdp-wrap"><input id="nMdp" type="password" autocomplete="new-password" required><button type="button" class="mdp-voir" data-action="mdp-voir" data-cible="nMdp">Afficher</button></div><p class="hint">8 caractères minimum, avec au moins une lettre et un chiffre.</p></div>
+        <div class="field"><label for="nMdp2">Confirmer</label><input id="nMdp2" type="password" autocomplete="new-password" required></div>
+      </div><p class="form-err" id="compteErr" role="alert"></p><button type="submit" class="btn-primary">Enregistrer</button></form>`}),
+    profil: () => {
+      const u = user, etu = estEmailEtudiant(u.email);
+      const date = u.created ? new Date(u.created).toLocaleDateString("fr-FR") : "—";
+      return {kicker:"Mon compte", titre:"Bonjour " + u.prenom, html: `
+      <div class="profil"><div class="avatar" aria-hidden="true">${esc((u.prenom || "?").charAt(0).toUpperCase())}</div>
+        <div><p class="profil-nom">${esc(u.prenom)}</p><p class="profil-mail">${esc(u.email)}${etu ? ` <span class="tag-etu">E-mail étudiant ✓</span>` : ""}</p></div></div>
+      <dl class="fiche-grid">
+        <div><dt>🎓 Établissement</dt><dd>${esc(u.etab || "Non renseigné")}</dd></div>
+        <div><dt>📅 Compte créé le</dt><dd>${esc(date)}</dd></div>
+        <div><dt>🛒 Mon panier</dt><dd>${panier.length} élément${panier.length > 1 ? "s" : ""}</dd></div>
+        <div><dt>💾 Enregistrement</dt><dd>${enLigne ? "En ligne, sur ton compte" : "Sur cet appareil uniquement"}</dd></div>
+      </dl>
+      <button type="button" class="btn-primary" data-go="panier">Voir mon panier</button>
+      <p class="form-err" id="compteErr" role="alert"></p>
+      ${confirmSuppr ? `<div class="compte-confirm"><strong>Cette action est définitive.</strong> Ton compte et ton panier seront effacés.<div><button type="button" class="btn-primary" style="margin:0;width:auto;padding:12px 22px;font-size:15px;" data-action="suppr-compte-ok">Oui, supprimer</button><button type="button" class="btn-ghost" data-action="suppr-compte-non">Annuler</button></div></div>`
+        : `<div class="profil-actions"><button type="button" class="btn-ghost" data-action="deconnexion">Se déconnecter</button><button type="button" class="lien-danger" data-action="suppr-compte">Supprimer mon compte</button></div>`}`};
+    }
+  };
+  const v = (vues[vueCompte] || vues.inscription)();
+  $("compteKicker").textContent = v.kicker; $("compteTitre").textContent = v.titre; $("compteCorps").innerHTML = v.html;
+}
+async function traiterFormulaire(f){
+  const err = $("compteErr");
+  const dire = (m, ok) => { if (err) { err.textContent = m; err.classList.toggle("ok", !!ok); } };
+  if (f.id === "formInscription") {
+    const d = {prenom:$("iPrenom").value.trim(), email:$("iEmail").value.trim().toLowerCase(), etab:$("iEtab").value, mdp:$("iMdp").value};
+    if (!d.prenom) throw ko("Indique ton prénom ou un pseudo.");
+    if (!EMAIL_RE.test(d.email)) throw ko("Cette adresse e-mail n'est pas valide.");
+    if (EXIGER_EMAIL_ETUDIANT && !estEmailEtudiant(d.email)) throw ko("Utilise ton adresse e-mail étudiante (" + DOMAINES_ETUDIANTS.join(", ") + ").");
+    const pb = verifierMdp(d.mdp); if (pb) throw ko(pb);
+    if (d.mdp !== $("iMdp2").value) throw ko("Les deux mots de passe ne sont pas identiques.");
+    if (!$("iCgu").checked) throw ko("Coche la case pour accepter l'enregistrement de tes données.");
+    if (enLigne) { if (await inscrireSb(d) === "confirmer") { vueCompte = "confirmer"; rendreCompte(); return; } }
+    else await inscrireLocal(d);
+    apresConnexion(); rendreCompte(); toast("Bienvenue " + user.prenom + " ! 🎓");
+  } else if (f.id === "formConnexion") {
+    const email = $("cEmail").value.trim().toLowerCase(), mdp = $("cMdp").value;
+    if (!EMAIL_RE.test(email) || !mdp) throw ko("Renseigne ton e-mail et ton mot de passe.");
+    if (enLigne) await connecterSb(email, mdp); else await connecterLocal(email, mdp);
+    apresConnexion(); rendreCompte(); toast("Content de te revoir, " + user.prenom + " !");
+  } else if (f.id === "formOubli") {
+    const email = $("oEmail").value.trim().toLowerCase();
+    if (!EMAIL_RE.test(email)) throw ko("Cette adresse e-mail n'est pas valide.");
+    try { await sb("/auth/v1/recover", {method:"POST", body:{email}}); } catch(e){ if (!(e instanceof ErrUtilisateur)) throw e; }
+    dire("Si un compte existe avec cet e-mail, un lien vient d'être envoyé.", true);
+  } else if (f.id === "formNouveauMdp") {
+    const m = $("nMdp").value, pb = verifierMdp(m);
+    if (pb) throw ko(pb);
+    if (m !== $("nMdp2").value) throw ko("Les deux mots de passe ne sont pas identiques.");
+    const tok = await jetonValide(); if (!tok) throw ko("Ce lien a expiré. Demande un nouvel e-mail.");
+    await sb("/auth/v1/user", {method:"PUT", token:tok, body:{password:m}});
+    vueCompte = "profil"; rendreCompte(); toast("Mot de passe mis à jour ✓");
+  }
+}
+document.addEventListener("submit", async e => {
+  const f = e.target;
+  if (!f.closest || !f.closest("#compteCorps")) return;
+  e.preventDefault();
+  const btn = f.querySelector("button[type=submit]"); if (btn) btn.disabled = true;
+  try { await traiterFormulaire(f); }
+  catch(ex) {
+    const err = $("compteErr");
+    if (err) { err.classList.remove("ok"); err.textContent = ex instanceof ErrUtilisateur ? ex.message : "Connexion impossible. Vérifie ta connexion internet et réessaie."; }
+  }
+  if (btn) btn.disabled = false;
+});
+$("compte").addEventListener("click", e => { if (e.target === $("compte")) fermerCompte(); });
+
 /* Un seul écouteur pour tous les clics (aucun onclick inline) */
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-go],[data-action],[data-fav],[data-del],[data-detail],[data-filter],[data-budget],[data-moment],[data-envie],[data-rub]");
+  const t = e.target.closest("[data-go],[data-action],[data-panier],[data-fav],[data-del],[data-detail],[data-filter],[data-budget],[data-moment],[data-envie],[data-rub]");
   if (!t) return;
   const d = t.dataset;
+  if (d.panier) return basculerPanier(d.panier);
   if (d.fav) return toggleFav(d.fav);
   if (d.del) return supprimer(d.del);
   if (d.detail) return ouvrirFiche(d.detail);
   if (d.filter) {
     filtre[d.filter] = d.v;
-    return ({bp:renderBonsPlans, courses:renderCourses, act:renderActivites, bourse:renderBourse, g0:renderGratuit})[d.filter]();
+    return ({bp:renderBonsPlans, courses:renderCourses, act:renderActivites, bourse:renderBourse, g0:renderGratuit, pxc:renderCourses, pxa:renderActivites})[d.filter]();
   }
   if (d.budget !== undefined) return setBudget(d.budget);
   if (d.moment) { jour.moment = d.moment; return reset(); }
@@ -658,6 +1097,28 @@ document.addEventListener("click", e => {
     case "menu-open": return toggleMenu(true);
     case "menu-close": return toggleMenu(false);
     case "fiche-close": return fermerFiche();
+    case "tri-courses": filtre.tric = !filtre.tric; return renderCourses();
+    case "tri-act": filtre.tria = !filtre.tria; return renderActivites();
+    case "partager": {
+      toggleMenu(false);
+      const url = location.href.split("#")[0];
+      if (navigator.share) { navigator.share({title:"StudiAmiens", text:"Les bons plans étudiants à Amiens : manger, sortir, se cultiver et faire ses courses à petit prix.", url}).catch(() => {}); return; }
+      if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(url).then(() => toast("Lien copié ✓"), () => toast("Copie impossible sur ce navigateur")); return; }
+      return toast("Copie impossible sur ce navigateur");
+    }
+    case "compte-open": toggleMenu(false); return ouvrirCompte();
+    case "compte-close": return fermerCompte();
+    case "compte-vue": vueCompte = d.vue; confirmSuppr = false; return rendreCompte();
+    case "mdp-voir": {
+      const champ = $(d.cible); const montre = champ.type === "password";
+      champ.type = montre ? "text" : "password"; t.textContent = montre ? "Masquer" : "Afficher"; return;
+    }
+    case "deconnexion": return deconnecter();
+    case "suppr-compte": confirmSuppr = true; return rendreCompte();
+    case "suppr-compte-non": confirmSuppr = false; return rendreCompte();
+    case "suppr-compte-ok": return supprimerCompte().catch(ex => { const er = $("compteErr"); if (er) er.textContent = ex instanceof ErrUtilisateur ? ex.message : "Suppression impossible pour le moment. Réessaie."; });
+    case "panier-copier": return copierPanier();
+    case "panier-vider": panier = []; sauverPanier(); renderAll(); renderIdees(); return toast("Panier vidé");
     case "g0-toggle": {
       const btn = $("g0Toggle"), corps = $("g0Body");
       const ouvert = btn.getAttribute("aria-expanded") === "true";
@@ -689,7 +1150,12 @@ $("rechercheActivites").addEventListener("input", renderActivites);
 /* ============================================================
    INIT
    ============================================================ */
+restaurerSession();
+chargerPanier();
+majBoutonCompte();
 renderAll();
 renderAujourdhui();
 go("aujourdhui");
 chargerRemote();
+if (enLigne && user) { tirerPanier(); }
+traiterRetourEmail();

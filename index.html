@@ -8,20 +8,25 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="StudiAmiens — Bons plans étudiants à Amiens">
 <meta property="og:description" content="Manger, sortir, se cultiver et faire ses courses à petit prix à Amiens.">
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
 <title>StudiAmiens — Le carnet partagé des étudiants amiénois</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<a class="skip" href="#contenu">Aller au contenu</a>
 
 <header>
   <div class="logo" data-go="aujourdhui" role="link" tabindex="0">
-    <div class="logo-badge">SA</div>
+    <img class="logo-img" src="logo.png" alt="Logo StudiAmiens" width="64" height="54">
     <div class="logo-word">Studi<span>Amiens</span></div>
   </div>
   <div class="header-actions">
-    <button class="btn-exchange btn-fav" data-go="favoris" aria-label="Mes favoris" id="btnFav"><span class="fav-star" aria-hidden="true">★</span><span class="fav-lbl">Favoris</span><span class="fav-count" id="favCount" hidden>0</span></button>
-    <button class="btn-exchange" data-action="openForm">＋ <span>Proposer un échange</span></button>
+    <button class="btn-exchange hbtn hbtn-compte" id="btnCompte" data-action="compte-open" aria-haspopup="dialog" aria-label="Créer ton compte étudiant"><span class="hico" aria-hidden="true">👤</span><span class="lbl lbl-full" id="compteLblFull">Créer ton compte étudiant</span><span class="lbl lbl-short" id="compteLblShort">Compte</span></button>
+    <button class="btn-exchange hbtn btn-pan" id="btnPanier" data-go="panier" aria-label="Mon panier"><span class="hico" aria-hidden="true">🛒</span><span class="lbl">Mon panier</span><span class="fav-count" id="panCount" hidden>0</span></button>
+    <button class="btn-exchange hbtn btn-fav" id="btnFav" data-go="favoris" aria-label="Mes favoris"><span class="hico fav-star" aria-hidden="true">★</span><span class="lbl">Favoris</span><span class="fav-count" id="favCount" hidden>0</span></button>
+    <button class="btn-exchange hbtn" data-action="openForm" aria-label="Proposer un échange"><span class="hico" aria-hidden="true">＋</span><span class="lbl">Proposer un échange</span></button>
     <button class="btn-burger" data-action="menu-open" aria-label="Menu"><span></span></button>
   </div>
 </header>
@@ -38,13 +43,16 @@
   <button class="link" data-go="activites">Activités</button>
   <button class="link" data-go="bourse">La bourse</button>
   <h3>Mon compte</h3>
+  <button class="link" data-action="compte-open" id="drawerCompte">Créer ton compte étudiant</button>
+  <button class="link" data-go="panier">Mon panier</button>
   <button class="link" data-go="favoris">Mes favoris</button>
   <button class="link" data-action="openForm">Déposer une annonce</button>
   <h3>À propos</h3>
+  <button class="link" data-action="partager">Partager StudiAmiens</button>
   <button class="link" data-action="about">Le projet</button>
 </aside>
 
-<main>
+<main id="contenu" tabindex="-1">
   <section class="page" id="page-aujourdhui">
     <p class="kicker today-date" id="todayDate">Aujourd'hui à Amiens</p>
     <h1 class="title">
@@ -158,6 +166,8 @@
         <input type="search" id="rechercheCourses" placeholder="Un resto, une rue, un type de cuisine…" aria-label="Rechercher un restaurant">
       </div>
       <div class="chips" id="chipsCourses"></div>
+      <div class="chips filtre-prix" id="prixCourses" role="group" aria-label="Filtrer par prix"></div>
+      <p class="hint" id="noteCourses" aria-live="polite"></p>
     </div>
     <div class="cards" id="grilleCourses"></div>
   </section>
@@ -193,6 +203,8 @@
         <input type="search" id="rechercheActivites" placeholder="Un théâtre, un cinéma, une sortie…" aria-label="Rechercher une activité">
       </div>
       <div class="chips" id="chipsActivites"></div>
+      <div class="chips filtre-prix" id="prixActivites" role="group" aria-label="Filtrer par prix"></div>
+      <p class="hint" id="noteActivites" aria-live="polite"></p>
     </div>
     <div class="cards" id="grilleActivites"></div>
   </section>
@@ -209,6 +221,15 @@
       </div>
     </div>
     <div class="cards" id="grilleBourse"></div>
+  </section>
+
+  <section class="page" id="page-panier">
+    <p class="kicker">Mon panier étudiant</p>
+    <h1 class="title" style="font-size:clamp(30px,5.5vw,46px);">Ton <em>panier.</em></h1>
+    <p class="intro" style="margin:16px 0 22px;">Garde ici les bons plans que tu veux faire, avec une estimation de ton budget.</p>
+    <div id="panierBanniere"></div>
+    <div id="panierResume"></div>
+    <div class="cards" id="grillePanier"></div>
   </section>
 
   <section class="page" id="page-favoris">
@@ -250,6 +271,10 @@
   </section>
 </main>
 
+<footer class="site-foot">
+  <p><a href="confidentialite.html">Mentions légales &amp; confidentialité</a> · Prix et horaires indicatifs : vérifie avant de te déplacer.</p>
+</footer>
+
 <nav class="tabs" aria-label="Navigation principale">
   <button class="tab" data-tab="aujourdhui" data-go="aujourdhui">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>
@@ -276,6 +301,15 @@
     <span>Bourse</span>
   </button>
 </nav>
+
+<dialog id="compte" aria-labelledby="compteTitre">
+  <div class="fiche-in compte-in">
+    <button class="fiche-close" data-action="compte-close" aria-label="Fermer">×</button>
+    <p class="kicker" id="compteKicker">Compte étudiant</p>
+    <h2 id="compteTitre"></h2>
+    <div id="compteCorps"></div>
+  </div>
+</dialog>
 
 <dialog id="fiche" aria-labelledby="ficheTitre">
   <div class="fiche-in">
